@@ -235,7 +235,9 @@ if [ "`echo $url | grep -ic "^https://"`" = "1" ]; then
 fi
 
 ## Check for curl
-if [ "x`which curl`" = "x" ]; then
+curl --version > /dev/null
+if [ "$?" != "0" ]
+then
     echo "... ERROR: This script requires 'curl' to be present."
     exit 1
 fi
@@ -263,6 +265,14 @@ if [ $backup = true ]&&[ $restore = false ]; then
     ERR_CHECK="`head -n 1 ${file_name} | grep '^{"error'`"
     if [ ! "x${ERR_CHECK}" = "x" ]; then
         echo "... ERROR: CouchDB reported: $ERR_CHECK"
+        exit 1
+    fi
+
+    ## Check for file command
+    file --help > /dev/null
+    if [ "$?" != "0" ]
+    then
+        echo "... ERROR: This script requires 'file' command to be present."
         exit 1
     fi
 
